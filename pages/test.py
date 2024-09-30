@@ -490,6 +490,7 @@ def load_dataframe_ended():
     st.text(" Cruce de dataframes realizado con éxito ")
 
     df_cerrados = task_time(df_final)
+    df_cerrados['Estado'] = 'Cerrado'
     st.text(" Cálculo de duración de actividades completado ")
     return df_cerrados
 
@@ -509,6 +510,7 @@ def load_dataframe_on_progress():
     st.text(" Cruce de dataframes realizado con éxito ")
 
     df_activos = task_time(df_final)
+    df_activos['Estado'] = 'En progreso'
     st.text(" Cálculo de duración de actividades completado ")
     return df_activos
 
@@ -581,15 +583,24 @@ if st.sidebar.button("Cargar proyectos cerrados"):
 if st.sidebar.button("Cargar proyectos activos"):
     st.session_state.df_activos = load_dataframe_on_progress()
 
+if st.sidebar.button("Juntar dataframes"):
+    df = pd.concat([df_cerrados, df_activos], ignore_index=True)
+
+
 startDate = pd.to_datetime(st.session_state.df_activos["Fecha Inicio ODT"]).min().date()
 st.sidebar.text(startDate)
 endDate = datetime.today().date()
 st.sidebar.text(endDate)
+clients = st.session_state.df_activos
+
 # endDate = pd.to_datetime(st.session_state.df_activos[""])
 
 # Filtro de fechas
 if (st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
     st.sidebar.title("Fechas")
+    st.sidebar.text("Inicio:")
+    
+    st.sidebar.text("Fin")
 
 
 
