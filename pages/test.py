@@ -602,10 +602,12 @@ if (st.session_state.get('df_cerrados') is not None and not st.session_state.df_
 # Verificar si df ha sido definido y no está vacío
 if df is not None and not df.empty:
     startDate = pd.to_datetime(df["Fecha Inicio ODT"]).min().date()
-    st.sidebar.text("Fecha de inicio más antigua: " + str(startDate))
+    date1 = pd.to_datetime(st.date_input("Inicio", startDate))
     endDate = datetime.today().date()
-    st.sidebar.text("Fecha de hoy: " + str(endDate))
-    st.dataframe(df)
+    date2 = pd.to_datetime(st.date_input("Fin", endDate))
+    st.sidebar.text(endDate)
+
+    
 
 
 
