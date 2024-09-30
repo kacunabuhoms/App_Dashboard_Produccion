@@ -581,23 +581,29 @@ if "df_activos" not in st.session_state:
 if "df" not in st.session_state:
     st.session_state.df_activos = None
 
-if st.sidebar.button("Cargar proyectos cerrados"):
+# if st.sidebar.button("Cargar proyectos cerrados"):
+#     st.session_state.df_cerrados = load_dataframe_ended() 
+
+# if st.sidebar.button("Cargar proyectos activos"):
+#     st.session_state.df_activos = load_dataframe_on_progress()
+
+# if (st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty 
+#     and st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
+#     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
+
+
+if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
-
-if st.sidebar.button("Cargar proyectos activos"):
     st.session_state.df_activos = load_dataframe_on_progress()
-
-if (st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty 
-    and st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 # if st.sidebar.button("Juntar dataframes"):
 #     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
 
-# Verificar que los DataFrames existan y tengan datos antes de concatenar
-if (st.session_state.get('df_cerrados') is not None and not st.session_state.df_cerrados.empty and
-    st.session_state.get('df_activos') is not None and not st.session_state.df_activos.empty):
-    df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
+# # Verificar que los DataFrames existan y tengan datos antes de concatenar
+# if (st.session_state.get('df_cerrados') is not None and not st.session_state.df_cerrados.empty and
+#     st.session_state.get('df_activos') is not None and not st.session_state.df_activos.empty):
+#     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 # Verificar si df ha sido definido y no está vacío
 if df is not None and not df.empty:
