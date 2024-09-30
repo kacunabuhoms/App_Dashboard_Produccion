@@ -577,17 +577,23 @@ if "df_cerrados" not in st.session_state:
 if "df_activos" not in st.session_state:
     st.session_state.df_activos = None
 
+if "df" not in st.session_state:
+    st.session_state.df_activos = None
+
 if st.sidebar.button("Cargar proyectos cerrados"):
     st.session_state.df_cerrados = load_dataframe_ended() 
 
 if st.sidebar.button("Cargar proyectos activos"):
     st.session_state.df_activos = load_dataframe_on_progress()
 
+if (st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty 
+    and st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
+    st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
+
 # if st.sidebar.button("Juntar dataframes"):
 #     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
 
-if (st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty 
-    and st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
+if (st.session_state.df is not None and not st.session_state.df.empty):
     startDate = pd.to_datetime(st.session_state.df_activos["Fecha Inicio ODT"]).min().date()
     st.sidebar.text(startDate)
     endDate = datetime.today().date()
@@ -598,7 +604,7 @@ if (st.session_state.df_cerrados is not None and not st.session_state.df_cerrado
 
 # Filtro de fechas
 if (st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
-    st.sidebar.title("Fechas")
+    st.sidebar.header("Fechas")
     st.sidebar.text("Inicio:")
     
     st.sidebar.text("Fin")
