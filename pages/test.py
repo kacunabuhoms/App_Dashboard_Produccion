@@ -495,15 +495,6 @@ def load_dataframe_ended():
 
 
 def load_dataframe_on_progress():
-    board_ids = ["2354185091"]  # Ejemplo de lista de IDs de tableros
-    group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: "new_group11120"
-    api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQwNTEwNjk2OCwiYWFpIjoxMSwidWlkIjo2Mzg5NDk0MCwiaWFkIjoiMjAyNC0wOS0wMlQxODoyNjo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTk3MDA2NSwicmduIjoidXNlMSJ9.XSia7vseMdnGXBQ2PiCjYNUtch-bOxeXQZeXv_8q1iI'  # Reemplaza esto con tu token de API real
-    column_ids = [
-                "text8", "date5", "date20", "fecha", "dropdown6", "label", "dup__of_status_17", "status_1",
-                "dup__of_status_10", "dup__of_status_11", "dup__of_status_19", "dup__of_empaque", "status_14",
-                "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
-    ]
-    json_data = []
     df_produccion = fetch_full_data()
 
 
@@ -564,6 +555,16 @@ st.logo(image)
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
+board_ids = ["2354185091"]  # Ejemplo de lista de IDs de tableros
+group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: "new_group11120"
+api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQwNTEwNjk2OCwiYWFpIjoxMSwidWlkIjo2Mzg5NDk0MCwiaWFkIjoiMjAyNC0wOS0wMlQxODoyNjo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTk3MDA2NSwicmduIjoidXNlMSJ9.XSia7vseMdnGXBQ2PiCjYNUtch-bOxeXQZeXv_8q1iI'  # Reemplaza esto con tu token de API real
+column_ids = [
+    "text8", "date5", "date20", "fecha", "dropdown6", "label", "dup__of_status_17", "status_1",
+    "dup__of_status_10", "dup__of_status_11", "dup__of_status_19", "dup__of_empaque", "status_14",
+    "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
+]
+json_data = []
+
 df_cerrados = load_dataframe_ended()
 df_activos = load_dataframe_on_progress()
 
