@@ -565,23 +565,45 @@ column_ids = [
 ]
 json_data = []
 
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("Cargar proyectos cerrados"):
-        df_cerrados = load_dataframe_ended()
+#------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------
 
-with col2:
-    if st.button("Cargar proyectos activos"):
-        df_activos = load_dataframe_on_progress()
+# Inicializa el estado de sesión para almacenar los DataFrames
+if "df_cerrados" not in st.session_state:
+    st.session_state.df_cerrados = None
+
+if "df_activos" not in st.session_state:
+    st.session_state.df_activos = None
+
+# Mover los botones al sidebar
+if st.sidebar.button("Cargar proyectos cerrados"):
+    st.session_state.df_cerrados = load_dataframe_ended()  # Guarda el resultado en session_state
+
+if st.sidebar.button("Cargar proyectos activos"):
+    st.session_state.df_activos = load_dataframe_on_progress()  # Guarda el resultado en session_state
+
               
+#------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------
 
+
+
+#------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------
 
 
 # Tab para Proyectos Activos
 tab_global, tab_on_progress, tab_stopped, tab_ready, tab_delayed, tab_waiting, tab_ended = st.tabs(["Global", "En progreso", "Detenidos", "Esperando confirmación", "Retrasados", "En proceso", "Finalizados"])
 with tab_global:
     st.text("Global")
+    # Mostrar los resultados si existen
+    if st.session_state.df_cerrados:
+        st.write("Proyectos cerrados:")
+        st.dataframe(st.session_state.df_cerrados)
 
+    if st.session_state.df_activos:
+        st.write("Proyectos activos:")
+        st.dataframe(st.session_state.df_activos)
 
 
 with tab_on_progress:
