@@ -568,7 +568,7 @@ json_data = []
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
 
-# Inicializa el estado de sesión para almacenar los DataFrames
+# Carga de dataframes
 if "df_cerrados" not in st.session_state:
     st.session_state.df_cerrados = None
 
@@ -582,14 +582,21 @@ if st.sidebar.button("Cargar proyectos cerrados"):
 if st.sidebar.button("Cargar proyectos activos"):
     st.session_state.df_activos = load_dataframe_on_progress()
 
-# Mostrar los resultados si existen
-if st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty:
-    st.write("Proyectos cerrados:")
-    st.dataframe(st.session_state.df_cerrados)
+# Filtro de fechas
+if (
+    st.session_state.df_activos is not None and not st.session_state.df_activos.empty
+):
+    st.sidebar.title("Fechas")
 
-if st.session_state.df_activos is not None and not st.session_state.df_activos.empty:
-    st.write("Proyectos activos:")
-    st.dataframe(st.session_state.df_activos)
+
+# # Mostrar los resultados si existen
+# if st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty:
+#     st.write("Proyectos cerrados:")
+#     st.dataframe(st.session_state.df_cerrados)
+
+# if st.session_state.df_activos is not None and not st.session_state.df_activos.empty:
+#     st.write("Proyectos activos:")
+#     st.dataframe(st.session_state.df_activos)
 
               
 #------------------------------------------------------------------------------------------------
