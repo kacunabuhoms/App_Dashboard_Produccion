@@ -580,7 +580,16 @@ if st.sidebar.button("Cargar proyectos cerrados"):
     st.session_state.df_cerrados = load_dataframe_ended()  # Guarda el resultado en session_state
 
 if st.sidebar.button("Cargar proyectos activos"):
-    st.session_state.df_activos = load_dataframe_on_progress()  # Guarda el resultado en session_state
+    st.session_state.df_activos = load_dataframe_on_progress()
+
+# Mostrar los resultados si existen
+if st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty:
+    st.write("Proyectos cerrados:")
+    st.dataframe(st.session_state.df_cerrados)
+
+if st.session_state.df_activos is not None and not st.session_state.df_activos.empty:
+    st.write("Proyectos activos:")
+    st.dataframe(st.session_state.df_activos)
 
               
 #------------------------------------------------------------------------------------------------
@@ -596,14 +605,7 @@ if st.sidebar.button("Cargar proyectos activos"):
 tab_global, tab_on_progress, tab_stopped, tab_ready, tab_delayed, tab_waiting, tab_ended = st.tabs(["Global", "En progreso", "Detenidos", "Esperando confirmación", "Retrasados", "En proceso", "Finalizados"])
 with tab_global:
     st.text("Global")
-    # Mostrar los resultados si existen
-    if st.session_state.df_cerrados:
-        st.write("Proyectos cerrados:")
-        st.dataframe(st.session_state.df_cerrados)
 
-    if st.session_state.df_activos:
-        st.write("Proyectos activos:")
-        st.dataframe(st.session_state.df_activos)
 
 
 with tab_on_progress:
