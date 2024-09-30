@@ -595,7 +595,7 @@ if "df" not in st.session_state:
 if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
-    df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
+    st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
     startDate = pd.to_datetime(df["Fecha Inicio ODT"]).min().date()
     endDate = datetime.today().date()
 
@@ -612,9 +612,9 @@ if df is not None and not df.empty:
     date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))  
     date2 = pd.to_datetime(st.sidebar.date_input("Fin", endDate))
     st.sidebar.text(endDate)
-    df = df[(df["Fecha Inicio ODT"] >= date1) and (df["Fecha final ODT Completo"] <= date2)]
+    st.session_state.df = st.session_state.df[(st.session_state.df["Fecha Inicio ODT"] >= date1) and (st.session_state.df["Fecha final ODT Completo"] <= date2)]
     
-    st.dataframe(df)
+    st.dataframe(st.session_state.df)
 
 
 
