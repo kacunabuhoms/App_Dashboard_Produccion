@@ -583,8 +583,8 @@ if st.sidebar.button("Cargar proyectos cerrados"):
 if st.sidebar.button("Cargar proyectos activos"):
     st.session_state.df_activos = load_dataframe_on_progress()
 
-if st.sidebar.button("Juntar dataframes"):
-    df = pd.concat([df_cerrados, df_activos], ignore_index=True)
+# if st.sidebar.button("Juntar dataframes"):
+#     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
 
 
 startDate = pd.to_datetime(st.session_state.df_activos["Fecha Inicio ODT"]).min().date()
