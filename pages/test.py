@@ -581,7 +581,7 @@ if st.sidebar.button("Cargar proyectos cerrados"):
 if st.sidebar.button("Cargar proyectos activos"):
     st.session_state.df_activos = load_dataframe_on_progress()
 
-startDate = pd.to_datetime(st.session_state.df_activos["Fecha Inicio ODT"]).min()
+startDate = pd.to_datetime(st.session_state.df_activos["Fecha Inicio ODT"]).min().date()
 st.sidebar.text(startDate)
 endDate = datetime.today().date()
 st.sidebar.text(endDate)
