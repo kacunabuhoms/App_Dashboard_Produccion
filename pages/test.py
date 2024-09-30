@@ -567,7 +567,8 @@ json_data = []
 
 col1, col2 = st.columns(2)
 with col1:
-    st.button("Cargar cerrados", on_click=load_dataframe_ended())
+    if st.button("Cargar proyectos cerrados"):
+        df_cerrados = load_dataframe_ended()
 
 with col2:
     if st.button("Cargar proyectos activos"):
