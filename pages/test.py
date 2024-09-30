@@ -596,6 +596,8 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
+    startDate = pd.to_datetime(df["Fecha Inicio ODT"]).min().date()
+    endDate = datetime.today().date()
 
 # if st.sidebar.button("Juntar dataframes"):
 #     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
@@ -607,9 +609,7 @@ if st.sidebar.button("Cargar información"):
 
 # Verificar si df ha sido definido y no está vacío
 if df is not None and not df.empty:
-    startDate = pd.to_datetime(df["Fecha Inicio ODT"]).min().date()
-    date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))
-    endDate = datetime.today().date()
+    date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))  
     date2 = pd.to_datetime(st.sidebar.date_input("Fin", endDate))
     st.sidebar.text(endDate)
 
