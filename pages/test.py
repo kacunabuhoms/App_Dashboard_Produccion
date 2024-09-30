@@ -575,18 +575,23 @@ if "df_cerrados" not in st.session_state:
 if "df_activos" not in st.session_state:
     st.session_state.df_activos = None
 
-# Mover los botones al sidebar
 if st.sidebar.button("Cargar proyectos cerrados"):
-    st.session_state.df_cerrados = load_dataframe_ended()  # Guarda el resultado en session_state
+    st.session_state.df_cerrados = load_dataframe_ended() 
 
 if st.sidebar.button("Cargar proyectos activos"):
     st.session_state.df_activos = load_dataframe_on_progress()
 
+startDate = pd.to_datetime(st.session_state.df_activos["Fecha Inicio ODT"])
+st.sidebar.text(startDate)
+endDate = datetime.today().date()
+st.sidebar.text(endDate)
+# endDate = pd.to_datetime(st.session_state.df_activos[""])
+
 # Filtro de fechas
-if (
-    st.session_state.df_activos is not None and not st.session_state.df_activos.empty
-):
+if (st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
     st.sidebar.title("Fechas")
+
+
 
 
 # # Mostrar los resultados si existen
