@@ -566,6 +566,7 @@ column_ids = [
     "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
 ]
 json_data = []
+df = None
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -593,20 +594,17 @@ if (st.session_state.df_cerrados is not None and not st.session_state.df_cerrado
 # if st.sidebar.button("Juntar dataframes"):
 #     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
 
-if (df is not None):
+# Verificar que los DataFrames existan y tengan datos antes de concatenar
+if (st.session_state.get('df_cerrados') is not None and not st.session_state.df_cerrados.empty and
+    st.session_state.get('df_activos') is not None and not st.session_state.df_activos.empty):
+    df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
+
+# Verificar si df ha sido definido y no está vacío
+if df is not None and not df.empty:
     startDate = pd.to_datetime(df["Fecha Inicio ODT"]).min().date()
-    st.sidebar.text(startDate)
+    st.sidebar.text("Fecha de inicio más antigua: " + str(startDate))
     endDate = datetime.today().date()
-    st.sidebar.text(endDate)
-
-# endDate = pd.to_datetime(st.session_state.df_activos[""])
-
-# Filtro de fechas
-if (st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
-    st.sidebar.header("Fechas")
-    st.sidebar.text("Inicio:")
-    
-    st.sidebar.text("Fin")
+    st.sidebar.text("Fecha de hoy: " + str(endDate))
 
 
 
