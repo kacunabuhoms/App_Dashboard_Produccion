@@ -570,8 +570,9 @@ with col1:
     st.button("Cargar cerrados", on_click=load_dataframe_ended())
 
 with col2:
-    st.button("Cargar proyectos activos", on_click=load_dataframe_on_progress())
-    st.dataframe(df_activos)            
+    if st.button("Cargar proyectos activos"):
+        df_activos = load_dataframe_on_progress()
+              
 
 
 
