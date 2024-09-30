@@ -605,6 +605,7 @@ if df is not None and not df.empty:
     st.sidebar.text("Fecha de inicio más antigua: " + str(startDate))
     endDate = datetime.today().date()
     st.sidebar.text("Fecha de hoy: " + str(endDate))
+    st.dataframe(df)
 
 
 
