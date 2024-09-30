@@ -612,10 +612,12 @@ if df is not None and not df.empty:
     date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))  
     date2 = pd.to_datetime(st.sidebar.date_input("Fin", endDate))
     st.sidebar.text(endDate)
+    df = df[(df["Fecha Inicio ODT"] >= date1) and (df["Fecha final ODT Completo"] <= date2)]
+    
+    st.dataframe(df)
 
-df = df[(df["Fecha Inicio ODT"] >= date1) and (df["Fecha final ODT Completo"] <= date2)]
 
-st.dataframe(df)
+
     
 
 
