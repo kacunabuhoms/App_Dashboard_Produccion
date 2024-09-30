@@ -466,6 +466,61 @@ def task_time_with_hours(df_final):
     return df_final
 
 
+def load_dataframe_ended():
+    board_ids = ["2354185091"]  # Ejemplo de lista de IDs de tableros
+    group_ids = ["topics"]  # Ejemplo de lista de IDs de grupos: "new_group11120"
+    api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQwNTEwNjk2OCwiYWFpIjoxMSwidWlkIjo2Mzg5NDk0MCwiaWFkIjoiMjAyNC0wOS0wMlQxODoyNjo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTk3MDA2NSwicmduIjoidXNlMSJ9.XSia7vseMdnGXBQ2PiCjYNUtch-bOxeXQZeXv_8q1iI'  # Reemplaza esto con tu token de API real
+    column_ids = [
+                "text8", "date5", "date20", "fecha", "dropdown6", "label", "dup__of_status_17", "status_1",
+                "dup__of_status_10", "dup__of_status_11", "dup__of_status_19", "dup__of_empaque", "status_14",
+                "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
+    ]
+    json_data = []
+    df_produccion = fetch_full_data()
+
+
+    board_id = 2354185091
+    from_date = (datetime.strptime(df_produccion['Fecha Inicio ODT'].min(), '%Y-%m-%d') - timedelta(days=2)).strftime('%Y-%m-%d')
+    to_date = datetime.now(timezone.utc)  # Use the current date as the end date, ensuring it's timezone-aware
+    df_activity_logs = fetch_activity_logs(api_key, board_id, from_date, to_date)
+    df_activity_logs.rename(columns={'pulse_id': 'Item ID'}, inplace=True)
+    st.text(" Dataframe de JSON Queries creado ")
+
+    df_final = dataframes_cross_active(df_produccion, df_activity_logs)
+    st.text(" Cruce de dataframes realizado con éxito ")
+
+    df_cerrados = task_time(df_final)
+    st.text(" Cálculo de duración de actividades completado ")
+    return df_cerrados
+
+
+def load_dataframe_on_progress():
+    board_ids = ["2354185091"]  # Ejemplo de lista de IDs de tableros
+    group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: "new_group11120"
+    api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQwNTEwNjk2OCwiYWFpIjoxMSwidWlkIjo2Mzg5NDk0MCwiaWFkIjoiMjAyNC0wOS0wMlQxODoyNjo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTk3MDA2NSwicmduIjoidXNlMSJ9.XSia7vseMdnGXBQ2PiCjYNUtch-bOxeXQZeXv_8q1iI'  # Reemplaza esto con tu token de API real
+    column_ids = [
+                "text8", "date5", "date20", "fecha", "dropdown6", "label", "dup__of_status_17", "status_1",
+                "dup__of_status_10", "dup__of_status_11", "dup__of_status_19", "dup__of_empaque", "status_14",
+                "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
+    ]
+    json_data = []
+    df_produccion = fetch_full_data()
+
+
+    board_id = 2354185091
+    from_date = (datetime.strptime(df_produccion['Fecha Inicio ODT'].min(), '%Y-%m-%d') - timedelta(days=2)).strftime('%Y-%m-%d')
+    to_date = datetime.now(timezone.utc)  # Use the current date as the end date, ensuring it's timezone-aware
+    df_activity_logs = fetch_activity_logs(api_key, board_id, from_date, to_date)
+    df_activity_logs.rename(columns={'pulse_id': 'Item ID'}, inplace=True)
+    st.text(" Dataframe de JSON Queries creado ")
+
+    df_final = dataframes_cross_full(df_produccion, df_activity_logs)
+    st.text(" Cruce de dataframes realizado con éxito ")
+
+    df_activos = task_time(df_final)
+    st.text(" Cálculo de duración de actividades completado ")
+    return df_activos
+
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -509,6 +564,10 @@ st.logo(image)
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
+df_cerrados = load_dataframe_ended()
+df_activos = load_dataframe_on_progress()
+
+
 
 # Tab para Proyectos Activos
 tab_global, tab_on_progress, tab_stopped, tab_ready, tab_delayed, tab_waiting, tab_ended = st.tabs(["Global", "En progreso", "Detenidos", "Esperando confirmación", "Retrasados", "En proceso", "Finalizados"])
