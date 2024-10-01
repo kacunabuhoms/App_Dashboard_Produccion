@@ -598,6 +598,7 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
     st.session_state.startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"]).min().date()
     st.session_state.endDate = datetime.today().date()
+    st.session_state.clientes = st.session_state.df['Cliente'].unique() 
 
 # if st.sidebar.button("Juntar dataframes"):
 #     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
@@ -608,18 +609,23 @@ if st.sidebar.button("Cargar información"):
 #     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 if 'df' in st.session_state and not st.session_state.df.empty:
-    # Utiliza fechas guardadas en el estado si están disponibles, si no usa fechas por defecto
+    # Filtros de fecha
     date1 = st.sidebar.date_input("Inicio", st.session_state.startDate)
     date2 = st.sidebar.date_input("Fin", st.session_state.endDate)
-    st.sidebar.text(f"Fecha final seleccionada: {date2}")
 
-    # Aplicar filtro sin sobreescribir el DataFrame en el estado de la sesión
-    filtered_df = st.session_state.df[(st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) & (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2))]
-
+    # Filtro por cliente
+    cliente_selected = st.sidebar.selectbox("Seleccionar Cliente", st.session_state.clientes)
+    
+    # Aplicar filtros
+    filtered_df = st.session_state.df[
+        (st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) &
+        (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2)) &
+        (st.session_state.df["Cliente"] == cliente_selected)
+    ]
+    
     # Mostrar el DataFrame filtrado
     st.write("DataFrame Filtrado:", filtered_df)
 
-# Si el DataFrame aún no está cargado o está vacío
 else:
     st.sidebar.write("Por favor, carga la información usando el botón 'Cargar información'.")
 
