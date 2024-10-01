@@ -608,7 +608,7 @@ if st.sidebar.button("Cargar información"):
 #     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 # Verificar si df ha sido definido y no está vacío
-if st.session_statedf is not None and not st.session_state.df.empty:
+if st.session_state.df is not None and not st.session_state.df.empty:
     date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))  
     date2 = pd.to_datetime(st.sidebar.date_input("Fin", endDate))
     st.sidebar.text(endDate)
