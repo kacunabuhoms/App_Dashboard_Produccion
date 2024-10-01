@@ -566,7 +566,7 @@ column_ids = [
     "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
 ]
 json_data = []
-df = None
+st.session_state.df = None
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -608,7 +608,7 @@ if st.sidebar.button("Cargar información"):
 #     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 # Verificar si df ha sido definido y no está vacío
-if df is not None and not df.empty:
+if st.session_statedf is not None and not st.session_state.df.empty:
     date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))  
     date2 = pd.to_datetime(st.sidebar.date_input("Fin", endDate))
     st.sidebar.text(endDate)
