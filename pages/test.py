@@ -591,12 +591,13 @@ if "df" not in st.session_state:
 #     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 
+# Botón para cargar y combinar DataFrames
 if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
-    startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"]).min().date()
-    endDate = datetime.today().date()
+    st.session_state.startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"]).min().date()
+    st.session_state.endDate = datetime.today().date()
 
 # if st.sidebar.button("Juntar dataframes"):
 #     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
@@ -606,14 +607,21 @@ if st.sidebar.button("Cargar información"):
 #     st.session_state.get('df_activos') is not None and not st.session_state.df_activos.empty):
 #     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
-# Verificar si df ha sido definido y no está vacío
-if st.session_state.df is not None and not st.session_state.df.empty:
-    date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))  
-    date2 = pd.to_datetime(st.sidebar.date_input("Fin", endDate))
-    st.sidebar.text(endDate)
-    st.session_state.df = st.session_state.df[(st.session_state.df["Fecha Inicio ODT"] >= date1) & (st.session_state.df["Fecha final ODT Completo"] <= date2)]
-    
-    st.dataframe(st.session_state.df)
+if 'df' in st.session_state and not st.session_state.df.empty:
+    # Utiliza fechas guardadas en el estado si están disponibles, si no usa fechas por defecto
+    date1 = st.sidebar.date_input("Inicio", st.session_state.startDate)
+    date2 = st.sidebar.date_input("Fin", st.session_state.endDate)
+    st.sidebar.text(f"Fecha final seleccionada: {date2}")
+
+    # Aplicar filtro sin sobreescribir el DataFrame en el estado de la sesión
+    filtered_df = st.session_state.df[(st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) & (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2))]
+
+    # Mostrar el DataFrame filtrado
+    st.write("DataFrame Filtrado:", filtered_df)
+
+# Si el DataFrame aún no está cargado o está vacío
+else:
+    st.sidebar.write("Por favor, carga la información usando el botón 'Cargar información'.")
 
 
 
