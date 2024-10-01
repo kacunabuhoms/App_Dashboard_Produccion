@@ -612,7 +612,8 @@ if st.session_state.df is not None and not st.session_state.df.empty:
     date1 = pd.to_datetime(st.sidebar.date_input("Inicio", startDate))  
     date2 = pd.to_datetime(st.sidebar.date_input("Fin", endDate))
     st.sidebar.text(endDate)
-    st.session_state.df = st.session_state.df[(st.session_state.df["Fecha Inicio ODT"] >= date1) and (st.session_state.df["Fecha final ODT Completo"] <= date2)]
+    st.session_state.df = st.session_state.df[(st.session_state.df["Fecha Inicio ODT"] >= date1) & (st.session_state.df["Fecha final ODT Completo"] <= date2)]
+
     
     st.dataframe(st.session_state.df)
 
