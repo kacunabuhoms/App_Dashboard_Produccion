@@ -596,7 +596,7 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
-    startDate = pd.to_datetime(df["Fecha Inicio ODT"]).min().date()
+    startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"]).min().date()
     endDate = datetime.today().date()
 
 # if st.sidebar.button("Juntar dataframes"):
