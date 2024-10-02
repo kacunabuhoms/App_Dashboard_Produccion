@@ -558,7 +558,7 @@ st.logo(image)
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
 board_ids = ["2354185091"]  # Ejemplo de lista de IDs de tableros
-group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: "new_group11120" = Cerrados, "topics" = "En progreso"
+# Ejemplo de lista de IDs de grupos: "new_group11120" = Cerrados, "topics" = "En progreso"
 api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQwNTEwNjk2OCwiYWFpIjoxMSwidWlkIjo2Mzg5NDk0MCwiaWFkIjoiMjAyNC0wOS0wMlQxODoyNjo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTk3MDA2NSwicmduIjoidXNlMSJ9.XSia7vseMdnGXBQ2PiCjYNUtch-bOxeXQZeXv_8q1iI'  # Reemplaza esto con tu token de API real
 column_ids = [
     "text8", "date5", "date20", "fecha", "dropdown6", "label", "dup__of_status_17", "status_1",
