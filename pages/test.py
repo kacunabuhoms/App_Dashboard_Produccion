@@ -5,6 +5,7 @@ import pytz
 import requests
 import json
 import io
+import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, timezone, date

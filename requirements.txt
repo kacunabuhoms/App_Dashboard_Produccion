@@ -50,6 +50,7 @@ requests-oauthlib==2.0.0
 rich==13.8.1
 rpds-py==0.20.0
 rsa==4.9
+seaborn==0.13.2
 six==1.16.0
 smmap==5.0.1
 streamlit==1.38.0
