@@ -754,8 +754,8 @@ def filtrar_por_estado(df, estado):
     return df[df['Estado'] == estado]
 
 # Crear las pestañas
-tab_global, tab_on_progress, tab_stopped, tab_ready, tab_delayed, tab_waiting, tab_ended = st.tabs(
-    ["Global", "En progreso", "Detenidos", "Esperando confirmación", "Retrasados", "Siguientes", "Finalizados"]
+tab_global, tab_on_progress, tab_stopped, tab_delayed, tab_ended = st.tabs(
+    ["Global", "En progreso", "Detenidos", "Retrasados", "Finalizados"]
 )
 
 # Aplicar el filtro dependiendo de la pestaña
@@ -773,19 +773,9 @@ with tab_stopped:
     df_filtrado = filtered_df[filtered_df['Estado'] == 'Detenido']
     st.dataframe(df_filtrado)
 
-with tab_ready:
-    st.text("Esperando confirmación")
-    df_filtrado = filtered_df[filtered_df['Estado'] == 'Esperando confirmación']
-    st.dataframe(df_filtrado)
-
 with tab_delayed:
     st.text("Retrasados")
     df_filtrado = filtered_df[filtered_df['Estado'] == 'Retrasados']
-    st.dataframe(df_filtrado)
-
-with tab_waiting:
-    st.text("En proceso")
-    df_filtrado = filtered_df[filtered_df['Estado'] == 'En proceso']
     st.dataframe(df_filtrado)
 
 with tab_ended:
