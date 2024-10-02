@@ -576,20 +576,22 @@ def load_dataframe_on_progress():
 
 
 def calcular_retraso(row):
-        if row['Estado'] == 'Cerrado':
-            # Verificar si 'Fecha final ODT Completo' no es nula
-            if pd.isnull(row['Fecha final ODT Completo']):
-                return None
-            delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
-        else:
-            # Usar la fecha actual
-            delta = row['Fecha fin ODC'] - datetime.today().date()
+    # Verificar que 'Fecha fin ODC' no es nula
+    if pd.isnull(row['Fecha fin ODC']):
+        return None
 
-        if pd.isnull(delta):
+    # Si el estado es 'Cerrado', restar 'Fecha final ODT Completo' a 'Fecha fin ODC'
+    if row['Estado'] == 'Cerrado':
+        if pd.isnull(row['Fecha final ODT Completo']):
+            # Si 'Fecha final ODT Completo' es nula, no podemos calcular el retraso
             return None
+        else:
+            delta_days = (row['Fecha fin ODC'] - row['Fecha final ODT Completo']).days
+    else:
+        # Si el estado es distinto de 'Cerrado', restar la fecha actual a 'Fecha fin ODC'
+        delta_days = (row['Fecha fin ODC'] - datetime.today().date()).days
 
-        days = delta.days
-        return days
+    return delta_days
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -661,21 +663,19 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
-    st.session_state.startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"]).min().date()
+    st.session_state.startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"], errors='coerce').min().date()
     st.session_state.endDate = datetime.today().date()
     st.session_state.clientes = st.session_state.df['Cliente'].unique() 
 
     # Convertir columnas de fecha a datetime y extraer solo la fecha (sin hora)
-    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC']).dt.date
+    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC'], errors='coerce').dt.date
     st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce').dt.date
-
+    
     # Aplicar la función al DataFrame
     st.session_state.df['Retraso'] = st.session_state.df.apply(
         calcular_retraso, axis=1
     )
 
-    # Mostrar el DataFrame actualizado
-    st.write(st.session_state.df)
 
 # Si no se selecciona ningún cliente, asumimos que se desean todos
 if 'df' in st.session_state and not st.session_state.df.empty:
