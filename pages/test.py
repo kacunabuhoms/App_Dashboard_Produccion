@@ -524,25 +524,6 @@ def load_dataframe_ended():
     return df_cerrados
 
 
-# def load_dataframe_on_progress():
-#     df_produccion = fetch_full_data_on_progress()
-
-#     board_id = 2354185091
-#     from_date = (datetime.strptime(df_produccion['Fecha Inicio ODT'].min(), '%Y-%m-%d') - timedelta(days=2)).strftime('%Y-%m-%d')
-#     to_date = datetime.now(timezone.utc)  # Use the current date as the end date, ensuring it's timezone-aware
-#     df_activity_logs = fetch_activity_logs(api_key, board_id, from_date, to_date)
-#     df_activity_logs.rename(columns={'pulse_id': 'Item ID'}, inplace=True)
-#     st.text(" Dataframe de JSON Queries creado ")
-
-#     df_final = dataframes_cross_full(df_produccion, df_activity_logs)
-#     st.text(" Cruce de dataframes realizado con éxito ")
-
-#     df_activos = task_time(df_final)
-#     df_activos['Estado'] = 'En progreso'
-#     st.text(" Cálculo de duración de actividades completado ")
-#     return df_activos
-
-
 def load_dataframe_on_progress():
     df_produccion = fetch_full_data_on_progress()
 
@@ -557,23 +538,8 @@ def load_dataframe_on_progress():
     st.text(" Cruce de dataframes realizado con éxito ")
 
     df_activos = task_time(df_final)
-    st.text(" Cálculo de duración de actividades completado ")
-
-    # Initialize 'Estado' as 'En progreso' for all rows
     df_activos['Estado'] = 'En progreso'
-
-    # Assign 'Retrasado' where 'Retraso' > 0
-    df_activos.loc[df_activos['Retraso'] > 0, 'Estado'] = 'Retrasados'
-
-    # Assign 'En preproyecto' where 'Preproyecto' or 'ODC' is 'None', unless already 'Retrasados'
-    en_preproyecto_mask = ((df_activos['Preproyecto'] == 'None') | (df_activos['ODC'] == 'None')) & (df_activos['Estado'] != 'Retrasados')
-    df_activos.loc[en_preproyecto_mask, 'Estado'] = 'En preproyecto'
-
-    # Assign 'Detenido' where 'Preprensa', 'Impresión', 'Acabados' are all 'Done' or 'None', and 'Estado' is still 'En progreso'
-    detenido_columns = ['Preprensa', 'Impresión', 'Acabados']
-    detenido_mask = df_activos[detenido_columns].apply(lambda x: all(item in ['Done', 'None'] for item in x), axis=1) & (df_activos['Estado'] == 'En progreso')
-    df_activos.loc[detenido_mask, 'Estado'] = 'Detenido'
-
+    st.text(" Cálculo de duración de actividades completado ")
     return df_activos
 
 
