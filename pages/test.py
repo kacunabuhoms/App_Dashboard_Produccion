@@ -683,6 +683,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
 
     
     st.write("DataFrame Filtrado:", filtered_df)
+    st.write(filtered_df.columns)
     st.write("Dataframe sin filtro", st.session_state.df)
     st.write("DataFrame cerrados", st.session_state.df_cerrados)
     st.write("DataFrame abiertos", st.session_state.df_activos)
