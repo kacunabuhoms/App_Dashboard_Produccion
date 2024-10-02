@@ -775,7 +775,7 @@ tab_global, tab_on_progress, tab_stopped, tab_delayed, tab_ended = st.tabs(
 with tab_global:
     st.text("Global")
     st.dataframe(filtered_df)
-    plot_average_durations(filtered_df)  # Mostrar todo el DataFrame sin filtros adicionales
+    st.plotly_chart(plot_average_durations(filtered_df), use_container_width=True, height = 200)  # Mostrar todo el DataFrame sin filtros adicionales
 
 
 
