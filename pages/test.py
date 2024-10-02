@@ -576,27 +576,27 @@ def load_dataframe_on_progress():
 
 
 # Definir función para calcular 'Retraso'
-def calculate_retraso(row, rounding_hours):
-        if row['Estado'] == 'Cerrado':
-            # Verificar si 'Fecha final ODT Completo' no es NaT
-            if pd.isnull(row['Fecha final ODT Completo']):
-                return None
-            delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
-        else:
-            # Usar la fecha actual
-            delta = row['Fecha fin ODC'] - pd.to_datetime(datetime.today().date())
-
-        if pd.isnull(delta):
+def calculate_retraso(row):
+    if row['Estado'] == 'Cerrado':
+        # Verificar si 'Fecha final ODT Completo' no es NaT
+        if pd.isnull(row['Fecha final ODT Completo']):
             return None
+        delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
+    else:
+        # Usar la fecha actual
+        delta = row['Fecha fin ODC'] - pd.to_datetime(datetime.today().date())
 
-        days = delta.days
-        hours = delta.seconds / 3600
+    if pd.isnull(delta):
+        return None
 
-        # Redondear según 'rounding_hours'
-        if hours >= rounding_hours:
-            days += 1
+    days = delta.days
+    hours = delta.seconds / 3600
 
-        return days
+    # Redondear según 'rounding_hours'
+    if hours >= rounding_hours:
+        days += 1
+
+    return days
 
 
 #------------------------------------------------------------------------------------------------
@@ -678,14 +678,12 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC'])
     st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce')
 
-    # Permitir al usuario elegir el número de horas para redondear
-    rounding_hours = st.number_input(
-        'Ingrese el número de horas después de las cuales se redondeará al siguiente día:',
-        min_value=0, max_value=24, value=4
-    )
+    # Establecer el número de horas para redondear directamente en el código
+    rounding_hours = 4  # Puedes cambiar este valor según tus necesidades
 
+    # Aplicar la función al DataFrame
     st.session_state.df['Retraso'] = st.session_state.df.apply(
-        lambda row: calculate_retraso(row, rounding_hours), axis=1
+        calculate_retraso, axis=1
     )
 
 
