@@ -614,7 +614,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
     date2 = st.sidebar.date_input("Fin", st.session_state.endDate)
     
     # Agregar 'Todos los Clientes' a la lista de opciones
-    st.session_state.clientes = ['Todos los Clientes'] + list(st.session_state.df['Cliente'].unique())
+    clientes_selected = st.sidebar.multiselect("Seleccionar Clientes", st.session_state.clientes, default=st.session_state.clientes)
     
     clientes_selected = st.sidebar.multiselect(
         "Seleccionar Clientes", 
@@ -623,7 +623,8 @@ if 'df' in st.session_state and not st.session_state.df.empty:
     )
 
     # Aplicar filtro de fecha y cliente
-    if 'Todos los Clientes' in clientes_selected or not clientes_selected:
+    # Si no se selecciona ningún cliente, asumimos que se desean todos
+    if not clientes_selected:
         filtered_df = st.session_state.df[
             (st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) &
             (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2))
@@ -634,6 +635,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
             (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2)) &
             (st.session_state.df["Cliente"].isin(clientes_selected))
         ]
+
     
     # Mostrar el DataFrame filtrado
     st.write("DataFrame Filtrado:", filtered_df)
