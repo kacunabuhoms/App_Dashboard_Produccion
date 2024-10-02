@@ -312,10 +312,12 @@ def dataframes_cross_full(df_produccion, df_activity_logs):
     
     df_resultado = df_produccion.merge(df_pivoted, on='Item ID', how='left')
 
-    df_resultado['Fecha final Recibido en Planta'] = df_resultado['Fecha final Recibido en Planta'].combine_first(
-                                                     df_resultado['Fecha final Recibido en planta'])
+    if 'Fecha final Recibido en Planta' in df_resultado.columns and 'Fecha final Recibido en planta' in df_resultado.columns:
+        # Realiza la operación solo si ambas columnas existen
+        df_resultado['Fecha final Recibido en Planta'] = df_resultado['Fecha final Recibido en Planta'].combine_first(
+                                                        df_resultado['Fecha final Recibido en planta'])
     
-    df_resultado = df_resultado.drop(columns=['Fecha final Recibido en planta'])
+        df_resultado = df_resultado.drop(columns=['Fecha final Recibido en planta'])
 
     nuevo_orden = [
         'Item ID', 'Item Name', 'Descripción', 'Fecha Inicio ODT', 'Fecha Final ODT', 
