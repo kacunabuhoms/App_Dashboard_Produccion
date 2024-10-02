@@ -172,7 +172,32 @@ def create_dataframe_from_multiple_queries(json_data, column_ids):
     return pd.DataFrame(all_data)
 
 
-def fetch_full_data(group_ids):
+def fetch_full_data_closed():
+    group_ids = ["new_group11120"]
+    initial_query, initial_cursor = fetch_monday_initial_data(board_ids, group_ids, api_key)
+    df_produccion = create_dataframe_from_json_initial(initial_query, column_ids)
+    print("Dataframe inicial creado")
+    
+    if len(df_produccion) > 499:
+        json_data = run_queries_until_complete(initial_cursor, api_key)
+        df_pages = create_dataframe_from_multiple_queries(json_data ,column_ids)
+        df_produccion = pd.concat([df_produccion, df_pages], ignore_index=True)
+        print("---------- Dataframe completo creado ----------")
+    else:
+        df_return = df_produccion
+
+    columnas_a_eliminar = [
+    "Fecha de Preproyecto", "Fecha de ODC", "Fecha de Preprensa", 
+    "Fecha de Impresión", "Fecha de Acabados", "Fecha de Producto Terminado",
+    "Fecha de Recibido en Planta", "Fecha de Logistica", "Fecha ODT Completa", "Fillrate"
+    ]
+    
+    df_return = df_produccion.drop(columns=columnas_a_eliminar)
+    df_return = df_return[df_return['Fecha Inicio ODT'].notna() & (df_return['Fecha Inicio ODT'] != "")]
+    return df_return
+
+def fetch_full_data_on_progress():
+    group_ids = ["topics"]
     initial_query, initial_cursor = fetch_monday_initial_data(board_ids, group_ids, api_key)
     df_produccion = create_dataframe_from_json_initial(initial_query, column_ids)
     print("Dataframe inicial creado")
@@ -476,7 +501,7 @@ def load_dataframe_ended():
                 "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
     ]
     json_data = []
-    df_produccion = fetch_full_data(group_ids)
+    df_produccion = fetch_full_data_closed(group_ids)
 
 
     board_id = 2354185091
@@ -497,7 +522,7 @@ def load_dataframe_ended():
 
 def load_dataframe_on_progress():
     group_ids = ["topics"]  # Ejemplo de lista de IDs de grupos: 
-    df_produccion = fetch_full_data(group_ids)
+    df_produccion = fetch_full_data_on_progress(group_ids)
 
     board_id = 2354185091
     from_date = (datetime.strptime(df_produccion['Fecha Inicio ODT'].min(), '%Y-%m-%d') - timedelta(days=2)).strftime('%Y-%m-%d')
