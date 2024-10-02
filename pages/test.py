@@ -196,6 +196,7 @@ def fetch_full_data_closed():
     df_return = df_return[df_return['Fecha Inicio ODT'].notna() & (df_return['Fecha Inicio ODT'] != "")]
     return df_return
 
+
 def fetch_full_data_on_progress():
     group_ids = ["topics"]
     initial_query, initial_cursor = fetch_monday_initial_data(board_ids, group_ids, api_key)
@@ -493,7 +494,6 @@ def task_time_with_hours(df_final):
 
 def load_dataframe_ended():
     board_ids = ["2354185091"]  # Ejemplo de lista de IDs de tableros
-    group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: 
     api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQwNTEwNjk2OCwiYWFpIjoxMSwidWlkIjo2Mzg5NDk0MCwiaWFkIjoiMjAyNC0wOS0wMlQxODoyNjo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTk3MDA2NSwicmduIjoidXNlMSJ9.XSia7vseMdnGXBQ2PiCjYNUtch-bOxeXQZeXv_8q1iI'  # Reemplaza esto con tu token de API real
     column_ids = [
                 "text8", "date5", "date20", "fecha", "dropdown6", "label", "dup__of_status_17", "status_1",
@@ -501,7 +501,7 @@ def load_dataframe_ended():
                 "date22", "date27", "date_1", "date_2", "date_3", "date45", "date_14", "date_26", "date2", "formula1"
     ]
     json_data = []
-    df_produccion = fetch_full_data_closed(group_ids)
+    df_produccion = fetch_full_data_closed()
 
 
     board_id = 2354185091
@@ -521,8 +521,7 @@ def load_dataframe_ended():
 
 
 def load_dataframe_on_progress():
-    group_ids = ["topics"]  # Ejemplo de lista de IDs de grupos: 
-    df_produccion = fetch_full_data_on_progress(group_ids)
+    df_produccion = fetch_full_data_on_progress()
 
     board_id = 2354185091
     from_date = (datetime.strptime(df_produccion['Fecha Inicio ODT'].min(), '%Y-%m-%d') - timedelta(days=2)).strftime('%Y-%m-%d')
