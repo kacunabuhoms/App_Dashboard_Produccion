@@ -538,27 +538,11 @@ def load_dataframe_on_progress():
     st.text(" Cruce de dataframes realizado con éxito ")
 
     df_activos = task_time(df_final)
+    df_activos['Estado'] = 'En progreso'
     st.text(" Cálculo de duración de actividades completado ")
-
-    # Define the columns to check
-    columns_to_check = ['Preproyecto', 'ODC', 'Preprensa', 'Impresión', 'Acabados', 'Logistica', 'ODT Completo']
-
-    # Check if any of the specified columns have values different from "Done" or "None"
-    mask_in_progress = df_activos[columns_to_check].apply(lambda row: row.astype(str).isin(['Done', 'None']).all() == False, axis=1)
-
-    # Assign "En progreso" or "Detenido" based on the mask
-    df_activos.loc[mask_in_progress, 'Estado'] = 'En progreso'
-    df_activos.loc[~mask_in_progress, 'Estado'] = 'Detenido'
-
-    # Overwrite "Estado" to "Retrasado" where 'Retraso' < 0
-    df_activos.loc[df_activos['Retraso'] < 0, 'Estado'] = 'Retrasado'
-
     return df_activos
 
 
-
-
-# Definir función para calcular 'Retraso'
 def calculate_retraso(row, rounding_hours=12):
     if row['Estado'] == 'Cerrado':
         # Verificar si 'Fecha final ODT Completo' no es NaT
@@ -583,6 +567,29 @@ def calculate_retraso(row, rounding_hours=12):
         days += 1
 
     return days
+
+
+def assign_estado(df):
+    # Filter records where 'Estado' is not 'Cerrado'
+    mask_not_cerrado = df['Estado'] != 'Cerrado'
+
+    # Define the columns to check
+    columns_to_check = ['Preproyecto', 'ODC', 'Preprensa', 'Impresión', 'Acabados', 'Logistica', 'ODT Completo']
+
+    # Create the mask for 'En progreso' for filtered records
+    mask_in_progress = df.loc[mask_not_cerrado, columns_to_check].apply(
+        lambda row: not row.astype(str).isin(['Done', 'None']).all(), axis=1)
+
+    # Assign 'Detenido' by default
+    df.loc[mask_not_cerrado, 'Estado'] = 'Detenido'
+
+    # Assign 'En progreso' where the mask is True
+    df.loc[mask_not_cerrado & mask_in_progress, 'Estado'] = 'En progreso'
+
+    # Overwrite 'Estado' to 'Retrasado' where 'Retraso' < 0
+    df.loc[mask_not_cerrado & (df['Retraso'] < 0), 'Estado'] = 'Retrasado'
+
+    return df
 
 
 #------------------------------------------------------------------------------------------------
@@ -670,6 +677,8 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df['Retraso'] = st.session_state.df.apply(
         calculate_retraso, axis=1
     )
+
+    st.session_state.df = assign_estado(st.session_state.df)
 
 
 
