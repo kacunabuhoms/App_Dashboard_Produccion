@@ -596,8 +596,8 @@ def assign_estado(df):
 def plot_average_durations(df):
     # Seleccionar las columnas de interés
     columns_of_interest = [
-        'Duración Preproyecto', 'Duración ODC', 'Duración Preprensa', 
-        'Duración Impresión', 'Duración Acabados', 'Duración Logistica', 'Duración ODT Completo'
+        'Duración Preprensa', 'Duración Impresión', 'Duración Acabados', 
+        'Duración Logistica', 'Duración ODT Completo'
     ]
     
     # Calcular el promedio de cada columna
