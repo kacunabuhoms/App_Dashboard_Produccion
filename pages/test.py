@@ -595,14 +595,15 @@ def assign_estado(df):
 
 # Plots
 def plot_average_durations(df):
-    # Seleccionar las columnas de interés
+# Seleccionar las columnas de interés
     columns_of_interest = [
-        'Duración Preprensa', 'Duración Impresión', 'Duración Acabados', 
-        'Duración Logistica', 'Duración ODT Completo'
+        'Duración Preproyecto', 'Duración ODC', 'Duración Preprensa', 
+        'Duración Impresión', 'Duración Acabados', 'Duración Logistica', 'Duración ODT Completo'
     ]
     
     # Calcular el promedio de cada columna
-    averages = df[columns_of_interest].mean()
+    averages = df[columns_of_interest].mean().reset_index()
+    averages.columns = ['Fase', 'Duración Promedio']
     
     # Crear el gráfico de barras con Seaborn
     fig, ax = plt.subplots(figsize=(10, 6))
