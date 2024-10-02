@@ -612,7 +612,15 @@ if st.sidebar.button("Cargar información"):
 if 'df' in st.session_state and not st.session_state.df.empty:
     date1 = st.sidebar.date_input("Inicio", st.session_state.startDate)
     date2 = st.sidebar.date_input("Fin", st.session_state.endDate)
-    clientes_selected = st.sidebar.multiselect("Seleccionar Clientes", st.session_state.clientes, default='Todos los Clientes')
+    
+    # Agregar 'Todos los Clientes' a la lista de opciones
+    st.session_state.clientes = ['Todos los Clientes'] + list(st.session_state.df['Cliente'].unique())
+    
+    clientes_selected = st.sidebar.multiselect(
+        "Seleccionar Clientes", 
+        st.session_state.clientes, 
+        default='Todos los Clientes'
+    )
 
     # Aplicar filtro de fecha y cliente
     if 'Todos los Clientes' in clientes_selected or not clientes_selected:
