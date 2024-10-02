@@ -607,7 +607,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
     )
 
     # Filtro de fecha y cliente
-    if 'Todos los Clientes' in clientes_selected or not clientes_selected:
+    if 'TODOS LOS CLIENTES' in clientes_selected or not clientes_selected:
         filtered_df = st.session_state.df[
             (st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) &
             (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2))
