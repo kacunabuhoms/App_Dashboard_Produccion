@@ -757,7 +757,7 @@ with tab_global:
 
 with tab_on_progress:
     st.text("En progreso")
-    df_filtrado = filtered_df[filtered_df['Estado'] == 'En progreso']
+    df_filtrado = filtered_df[filtered_df['Estado'] != 'Cerrado']
     st.dataframe(df_filtrado)
 
 with tab_stopped:
