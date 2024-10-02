@@ -603,13 +603,13 @@ def plot_average_durations(df):
     # Calcular el promedio de cada columna
     averages = df[columns_of_interest].mean()
     
-    # Crear el gráfico de barras
+    # Crear el gráfico de barras con Seaborn
     fig, ax = plt.subplots(figsize=(10, 6))
-    averages.plot(kind='bar', color='skyblue', ax=ax)
+    sns.barplot(x='Fase', y='Duración Promedio', data=averages, ax=ax, palette='Blues_d')
     ax.set_title('Promedio de Duración por Fase del Proyecto')
     ax.set_ylabel('Duración Promedio')
-    ax.set_xticklabels(averages.index, rotation=45)
-    plt.tight_layout()
+    ax.set_xlabel('Fase del Proyecto')
+    plt.xticks(rotation=45)
     
     # Mostrar el gráfico en Streamlit
     st.pyplot(fig)
