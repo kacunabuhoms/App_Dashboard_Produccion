@@ -608,7 +608,7 @@ if "df" not in st.session_state:
 
 
 # Botón para cargar y combinar DataFrames
-if st.sidebar.button("Cargar información"):
+if st.sidebar.button("Cargar información"): 
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
@@ -646,6 +646,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
         ]
     
     st.write("DataFrame Filtrado:", filtered_df)
+    st.write("Dataframe sin filtro", st.session_state.df)
     st.write("DataFrame cerrados", st.session_state.df_cerrados)
     st.write("DataFrame abiertos", st.session_state.df_activos)
 
