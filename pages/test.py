@@ -541,6 +541,27 @@ def load_dataframe_on_progress():
     return df_activos
 
 
+def calcular_retraso(row):
+    if row['Estado'] == 'Cerrado':
+        # Verificar si 'Fecha final ODT Completo' no es NaT
+        if pd.isnull(row['Fecha final ODT Completo']):
+            return None
+        delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
+    else:
+            # Usar la fecha actual
+        delta = row['Fecha fin ODC'] - pd.to_datetime(datetime.today().date())
+
+    if pd.isnull(delta):
+        return None
+
+    days = delta.days
+    hours = delta.seconds / 3600
+
+    # Redondear según 'rounding_hours'
+    if hours >= rounding_hours:
+        days += 1
+    return days
+
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -612,20 +633,22 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
- 
-        # Calcular diferencia entre Fecha Inicio ODT y Fecha Final ODC (Inicio de producción) - df_test
-    st.session_state.df["Fecha Inicio ODT"] = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"])
-    st.session_state.df["Fecha fin ODC"] = pd.to_datetime(st.session_state.df["Fecha fin ODC"])
-
-    # Calcular la diferencia en días, redondeando si hay más de 16 horas
-    st.session_state.df["Retraso ODC"] = (st.session_state.df["Fecha final ODC"] - st.session_state.df["Fecha Inicio ODT"]).apply(
-        lambda delta: delta.days + (1 if delta.seconds >= 12 * 3600 else 0)
-    )
-
     st.session_state.startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"]).min().date()
     st.session_state.endDate = datetime.today().date()
     st.session_state.clientes = st.session_state.df['Cliente'].unique() 
 
+
+ # Convertir columnas de fecha a datetime
+    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC'])
+    st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce')
+
+    # Establecer el número de horas para redondear directamente en el código
+    rounding_hours = 12  # Puedes cambiar este valor según tus necesidades
+
+    # Aplicar la función al DataFrame
+    st.session_state.df['Retraso'] = st.session_state.df.apply(
+        calcular_retraso, axis=1
+    )
 
 # Si no se selecciona ningún cliente, asumimos que se desean todos
 if 'df' in st.session_state and not st.session_state.df.empty:
