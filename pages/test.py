@@ -524,6 +524,7 @@ def load_dataframe_ended():
     return df_cerrados
 
 
+
 def load_dataframe_on_progress():
     df_produccion = fetch_full_data_on_progress()
 
