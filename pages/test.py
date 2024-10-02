@@ -496,6 +496,7 @@ def load_dataframe_ended():
 
 
 def load_dataframe_on_progress():
+    group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: 
     df_produccion = fetch_full_data()
 
     board_id = 2354185091
