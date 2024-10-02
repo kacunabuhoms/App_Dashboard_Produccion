@@ -603,7 +603,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
     clientes_selected = st.sidebar.multiselect(
         "Seleccionar Clientes", 
         st.session_state.clientes, 
-        default='Todos los Clientes'
+        default='TODOS LOS CLIENTES'
     )
 
     # Filtro de fecha y cliente
