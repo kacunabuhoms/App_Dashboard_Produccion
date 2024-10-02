@@ -661,31 +661,26 @@ if "df" not in st.session_state:
     st.session_state.df_activos = None
 
 
+# Botón para cargar y combinar DataFrames
 if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended()
     st.session_state.df_activos = load_dataframe_on_progress()
+    # Concatenar los DataFrames
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
-    
-    # Convertir columnas de fecha a datetime sin extraer .dt.date
-    st.session_state.df['Fecha Inicio ODT'] = pd.to_datetime(st.session_state.df['Fecha Inicio ODT'], errors='coerce')
-    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC'], errors='coerce')
-    st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce')
-    
-    # Localizar las fechas en la zona horaria especificada
-    st.session_state.df['Fecha Inicio ODT'] = st.session_state.df['Fecha Inicio ODT'].dt.tz_localize(tz)
-    st.session_state.df['Fecha fin ODC'] = st.session_state.df['Fecha fin ODC'].dt.tz_localize(tz)
-    st.session_state.df['Fecha final ODT Completo'] = st.session_state.df['Fecha final ODT Completo'].dt.tz_localize(tz)
-    
-    # Obtener la fecha mínima y la fecha actual en la zona horaria especificada
-    st.session_state.startDate = st.session_state.df["Fecha Inicio ODT"].min()
-    st.session_state.endDate = datetime.now(tz)
-    st.session_state.clientes = st.session_state.df['Cliente'].unique()
 
+    # Convertir las columnas de fecha a datetime
+    st.session_state.df["Fecha Inicio ODT"] = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"])
+    st.session_state.df["Fecha fin ODC"] = pd.to_datetime(st.session_state.df["Fecha fin ODC"])
 
-    # Aplicar la función al DataFrame
-    st.session_state.df['Retraso'] = st.session_state.df.apply(
-        calculate_retraso, axis=1
+    # Calcular la diferencia en días, redondeando si hay más de 16 horas
+    st.session_state.df["Retraso ODC"] = (st.session_state.df["Fecha fin ODC"] - st.session_state.df["Fecha Inicio ODT"]).apply(
+        lambda delta: delta.days + (1 if delta.seconds >= 12 * 3600 else 0)
     )
+
+    # Actualizar el rango de fechas y lista de clientes
+    st.session_state.startDate = st.session_state.df["Fecha Inicio ODT"].min().date()
+    st.session_state.endDate = datetime.today().date()
+    st.session_state.clientes = st.session_state.df['Cliente'].unique()
 
 
 
