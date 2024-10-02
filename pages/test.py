@@ -576,7 +576,7 @@ def load_dataframe_on_progress():
 
 
 # Definir función para calcular 'Retraso'
-def calcular_retraso(row):
+def calculate_retraso(row):
     # Verificar que 'Fecha fin ODC' no es nula
     if pd.isnull(row['Fecha fin ODC']):
         return None
@@ -595,7 +595,6 @@ def calcular_retraso(row):
         delta_days = delta.days
         
     return delta_days
-
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -673,18 +672,19 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce')
     
     # Localizar las fechas en la zona horaria especificada
-    st.session_state.df['Fecha Inicio ODT'] = st.session_state.df['Fecha Inicio ODT'].dt.tz_localize('UTC').dt.tz_convert(tz)
-    st.session_state.df['Fecha fin ODC'] = st.session_state.df['Fecha fin ODC'].dt.tz_localize('UTC').dt.tz_convert(tz)
-    st.session_state.df['Fecha final ODT Completo'] = st.session_state.df['Fecha final ODT Completo'].dt.tz_localize('UTC').dt.tz_convert(tz)
+    st.session_state.df['Fecha Inicio ODT'] = st.session_state.df['Fecha Inicio ODT'].dt.tz_localize(tz)
+    st.session_state.df['Fecha fin ODC'] = st.session_state.df['Fecha fin ODC'].dt.tz_localize(tz)
+    st.session_state.df['Fecha final ODT Completo'] = st.session_state.df['Fecha final ODT Completo'].dt.tz_localize(tz)
     
     # Obtener la fecha mínima y la fecha actual en la zona horaria especificada
-    st.session_state.startDate = st.session_state.df["Fecha Inicio ODT"].min().astimezone(tz)
+    st.session_state.startDate = st.session_state.df["Fecha Inicio ODT"].min()
     st.session_state.endDate = datetime.now(tz)
     st.session_state.clientes = st.session_state.df['Cliente'].unique()
 
-   # Aplicar la función al DataFrame
+
+    # Aplicar la función al DataFrame
     st.session_state.df['Retraso'] = st.session_state.df.apply(
-        calcular_retraso, axis=1
+        calculate_retraso, axis=1
     )
 
 
