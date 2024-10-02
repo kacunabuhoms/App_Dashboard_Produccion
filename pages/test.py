@@ -604,13 +604,15 @@ def plot_average_durations(df):
     averages = df[columns_of_interest].mean()
     
     # Crear el gráfico de barras
-    plt.figure(figsize=(10, 6))
-    averages.plot(kind='bar', color='skyblue')
-    plt.title('Promedio de Duración por Fase del Proyecto')
-    plt.ylabel('Duración Promedio')
-    plt.xticks(rotation=45)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    averages.plot(kind='bar', color='skyblue', ax=ax)
+    ax.set_title('Promedio de Duración por Fase del Proyecto')
+    ax.set_ylabel('Duración Promedio')
+    ax.set_xticklabels(averages.index, rotation=45)
     plt.tight_layout()
-    plt.show()
+    
+    # Mostrar el gráfico en Streamlit
+    st.pyplot(fig)
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -774,9 +776,7 @@ tab_global, tab_on_progress, tab_stopped, tab_delayed, tab_ended = st.tabs(
 # Aplicar el filtro dependiendo de la pestaña
 with tab_global:
     st.text("Global")
-    st.dataframe(filtered_df)
-    st.plotly_chart(plot_average_durations(filtered_df), use_container_width=True, height = 200)  # Mostrar todo el DataFrame sin filtros adicionales
-
+    plot_average_durations(filtered_df)
 
 
 with tab_on_progress:
