@@ -775,7 +775,7 @@ with tab_stopped:
 
 with tab_delayed:
     st.text("Retrasados")
-    df_filtrado = filtered_df[filtered_df['Estado'] == 'Retrasados']
+    df_filtrado = filtered_df[filtered_df['Estado'] == 'Retrasado']
     st.dataframe(df_filtrado)
 
 with tab_ended:
