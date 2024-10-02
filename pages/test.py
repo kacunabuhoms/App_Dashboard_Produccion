@@ -524,7 +524,6 @@ def load_dataframe_ended():
     return df_cerrados
 
 
-
 def load_dataframe_on_progress():
     df_produccion = fetch_full_data_on_progress()
 
@@ -539,9 +538,23 @@ def load_dataframe_on_progress():
     st.text(" Cruce de dataframes realizado con éxito ")
 
     df_activos = task_time(df_final)
-    df_activos['Estado'] = 'En progreso'
     st.text(" Cálculo de duración de actividades completado ")
+
+    # Define the columns to check
+    columns_to_check = ['Preproyecto', 'ODC', 'Preprensa', 'Impresión', 'Acabados', 'Logistica', 'ODT Completo']
+
+    # Check if any of the specified columns have values different from "Done" or "None"
+    mask_in_progress = df_activos[columns_to_check].apply(lambda row: row.astype(str).isin(['Done', 'None']).all() == False, axis=1)
+
+    # Assign "En progreso" or "Detenido" based on the mask
+    df_activos.loc[mask_in_progress, 'Estado'] = 'En progreso'
+    df_activos.loc[~mask_in_progress, 'Estado'] = 'Detenido'
+
+    # Overwrite "Estado" to "Retrasado" where 'Retraso' < 0
+    df_activos.loc[df_activos['Retraso'] < 0, 'Estado'] = 'Retrasado'
+
     return df_activos
+
 
 
 
