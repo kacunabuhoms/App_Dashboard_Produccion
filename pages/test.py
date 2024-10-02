@@ -6,7 +6,7 @@ import requests
 import json
 import io
 import numpy as np
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 from PIL import Image
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -575,22 +575,25 @@ def load_dataframe_on_progress():
 #     return df_activos
 
 
+# Definir función para calcular 'Retraso'
 def calcular_retraso(row):
     # Verificar que 'Fecha fin ODC' no es nula
     if pd.isnull(row['Fecha fin ODC']):
         return None
-
+        
     # Si el estado es 'Cerrado', restar 'Fecha final ODT Completo' a 'Fecha fin ODC'
     if row['Estado'] == 'Cerrado':
         if pd.isnull(row['Fecha final ODT Completo']):
-            # Si 'Fecha final ODT Completo' es nula, no podemos calcular el retraso
+            # No se puede calcular el retraso sin 'Fecha final ODT Completo'
             return None
         else:
-            delta_days = (row['Fecha fin ODC'] - row['Fecha final ODT Completo']).days
+            delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
+            delta_days = delta.days
     else:
         # Si el estado es distinto de 'Cerrado', restar la fecha actual a 'Fecha fin ODC'
-        delta_days = (row['Fecha fin ODC'] - datetime.today().date()).days
-
+        delta = row['Fecha fin ODC'] - datetime.now(tz)
+        delta_days = delta.days
+        
     return delta_days
 
 #------------------------------------------------------------------------------------------------
@@ -659,22 +662,31 @@ if "df" not in st.session_state:
     st.session_state.df_activos = None
 
 
-if st.sidebar.button("Cargar información"): 
-    st.session_state.df_cerrados = load_dataframe_ended() 
+if st.sidebar.button("Cargar información"):
+    st.session_state.df_cerrados = load_dataframe_ended()
     st.session_state.df_activos = load_dataframe_on_progress()
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
-    st.session_state.startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"], errors='coerce').min().date()
-    st.session_state.endDate = datetime.today().date()
-    st.session_state.clientes = st.session_state.df['Cliente'].unique() 
-
-    # Convertir columnas de fecha a datetime y extraer solo la fecha (sin hora)
-    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC'], errors='coerce').dt.date
-    st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce').dt.date
     
-    # Aplicar la función al DataFrame
+    # Convertir columnas de fecha a datetime sin extraer .dt.date
+    st.session_state.df['Fecha Inicio ODT'] = pd.to_datetime(st.session_state.df['Fecha Inicio ODT'], errors='coerce')
+    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC'], errors='coerce')
+    st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce')
+    
+    # Localizar las fechas en la zona horaria especificada
+    st.session_state.df['Fecha Inicio ODT'] = st.session_state.df['Fecha Inicio ODT'].dt.tz_localize('UTC').dt.tz_convert(tz)
+    st.session_state.df['Fecha fin ODC'] = st.session_state.df['Fecha fin ODC'].dt.tz_localize('UTC').dt.tz_convert(tz)
+    st.session_state.df['Fecha final ODT Completo'] = st.session_state.df['Fecha final ODT Completo'].dt.tz_localize('UTC').dt.tz_convert(tz)
+    
+    # Obtener la fecha mínima y la fecha actual en la zona horaria especificada
+    st.session_state.startDate = st.session_state.df["Fecha Inicio ODT"].min().astimezone(tz)
+    st.session_state.endDate = datetime.now(tz)
+    st.session_state.clientes = st.session_state.df['Cliente'].unique()
+
+   # Aplicar la función al DataFrame
     st.session_state.df['Retraso'] = st.session_state.df.apply(
         calcular_retraso, axis=1
     )
+
 
 
 # Si no se selecciona ningún cliente, asumimos que se desean todos
