@@ -582,14 +582,16 @@ def assign_estado(df):
     mask_in_progress = df.loc[mask_not_cerrado, columns_to_check].apply(
         lambda row: not row.astype(str).isin(['Done', 'None']).all(), axis=1)
 
+    # Overwrite 'Estado' to 'Retrasado' where 'Retraso' < 0
+    df.loc[mask_not_cerrado & (df['Retraso'] < 0), 'Estado'] = 'Retrasado'
+
     # Assign 'Detenido' by default
     df.loc[mask_not_cerrado, 'Estado'] = 'Detenido'
 
     # Assign 'En progreso' where the mask is True
     df.loc[mask_not_cerrado & mask_in_progress, 'Estado'] = 'En progreso'
 
-    # Overwrite 'Estado' to 'Retrasado' where 'Retraso' < 0
-    df.loc[mask_not_cerrado & (df['Retraso'] < 0), 'Estado'] = 'Retrasado'
+
 
     return df
 
