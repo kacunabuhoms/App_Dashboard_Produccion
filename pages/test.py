@@ -6,6 +6,7 @@ import requests
 import json
 import io
 import numpy as np
+import matplotlib as plt
 from datetime import datetime, timedelta, timezone, date
 from PIL import Image
 from google.oauth2 import service_account
@@ -591,6 +592,25 @@ def assign_estado(df):
 
     return df
 
+# Plots
+def plot_average_durations(df):
+    # Seleccionar las columnas de interés
+    columns_of_interest = [
+        'Duración Preproyecto', 'Duración ODC', 'Duración Preprensa', 
+        'Duración Impresión', 'Duración Acabados', 'Duración Logistica', 'Duración ODT Completo'
+    ]
+    
+    # Calcular el promedio de cada columna
+    averages = df[columns_of_interest].mean()
+    
+    # Crear el gráfico de barras
+    plt.figure(figsize=(10, 6))
+    averages.plot(kind='bar', color='skyblue')
+    plt.title('Promedio de Duración por Fase del Proyecto')
+    plt.ylabel('Duración Promedio')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -754,22 +774,31 @@ tab_global, tab_on_progress, tab_stopped, tab_delayed, tab_ended = st.tabs(
 # Aplicar el filtro dependiendo de la pestaña
 with tab_global:
     st.text("Global")
-    st.dataframe(filtered_df)  # Mostrar todo el DataFrame sin filtros adicionales
+    st.dataframe(filtered_df)
+    plot_average_durations(filtered_df)  # Mostrar todo el DataFrame sin filtros adicionales
+
+
 
 with tab_on_progress:
     st.text("En progreso")
     df_filtrado = filtered_df[filtered_df['Estado'] != 'Cerrado']
     st.dataframe(df_filtrado)
 
+
+
 with tab_stopped:
     st.text("Detenidos")
     df_filtrado = filtered_df[filtered_df['Estado'] == 'Detenido']
     st.dataframe(df_filtrado)
 
+
+
 with tab_delayed:
     st.text("Retrasados")
     df_filtrado = filtered_df[filtered_df['Estado'] == 'Retrasado']
     st.dataframe(df_filtrado)
+
+
 
 with tab_ended:
     st.text("Finalizados")
