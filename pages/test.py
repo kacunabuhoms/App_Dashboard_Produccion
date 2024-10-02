@@ -633,17 +633,21 @@ if 'df' in st.session_state and not st.session_state.df.empty:
     )
 
     # Filtro de fecha y cliente
+    # Adjusted date filter to include NaN and future dates
     if 'TODOS LOS CLIENTES' in clientes_selected or not clientes_selected:
         filtered_df = st.session_state.df[
             (st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) &
-            (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2))
+            ((st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2)) | 
+            (st.session_state.df["Fecha final ODT Completo"].isna()))
         ]
     else:
         filtered_df = st.session_state.df[
             (st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) &
-            (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2)) &
+            ((st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2)) | 
+            (st.session_state.df["Fecha final ODT Completo"].isna())) &
             (st.session_state.df["Cliente"].isin(clientes_selected))
         ]
+
     
     st.write("DataFrame Filtrado:", filtered_df)
     st.write("Dataframe sin filtro", st.session_state.df)
