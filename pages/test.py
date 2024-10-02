@@ -750,6 +750,7 @@ tab_global, tab_on_progress, tab_stopped, tab_delayed, tab_ended = st.tabs(
     ["Global", "En progreso", "Detenidos", "Retrasados", "Finalizados"]
 )
 
+
 # Aplicar el filtro dependiendo de la pestaña
 with tab_global:
     st.text("Global")
