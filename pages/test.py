@@ -498,7 +498,6 @@ def load_dataframe_ended():
 def load_dataframe_on_progress():
     df_produccion = fetch_full_data()
 
-
     board_id = 2354185091
     from_date = (datetime.strptime(df_produccion['Fecha Inicio ODT'].min(), '%Y-%m-%d') - timedelta(days=2)).strftime('%Y-%m-%d')
     to_date = datetime.now(timezone.utc)  # Use the current date as the end date, ensuring it's timezone-aware
@@ -620,6 +619,8 @@ if 'df' in st.session_state and not st.session_state.df.empty:
         ]
     
     st.write("DataFrame Filtrado:", filtered_df)
+    st.write("DataFrame cerrados", st.session_state.df_cerrados)
+    st.write("DataFrame abiertos", st.session_state.df_activos)
 
 
 else:
