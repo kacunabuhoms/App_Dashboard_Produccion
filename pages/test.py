@@ -612,6 +612,16 @@ if st.sidebar.button("Cargar información"):
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
     st.session_state.df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
+ 
+        # Calcular diferencia entre Fecha Inicio ODT y Fecha Final ODC (Inicio de producción) - df_test
+    st.session_state.df["Fecha Inicio ODT"] = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"])
+    st.session_state.df["Fecha fin ODC"] = pd.to_datetime(st.session_state.df["Fecha fin ODC"])
+
+    # Calcular la diferencia en días, redondeando si hay más de 16 horas
+    st.session_state.df["Retraso ODC"] = (st.session_state.df["Fecha final ODC"] - st.session_state.df["Fecha Inicio ODT"]).apply(
+        lambda delta: delta.days + (1 if delta.seconds >= 12 * 3600 else 0)
+    )
+
     st.session_state.startDate = pd.to_datetime(st.session_state.df["Fecha Inicio ODT"]).min().date()
     st.session_state.endDate = datetime.today().date()
     st.session_state.clientes = st.session_state.df['Cliente'].unique() 
@@ -689,7 +699,7 @@ def filtrar_por_estado(df, estado):
 
 # Crear las pestañas
 tab_global, tab_on_progress, tab_stopped, tab_ready, tab_delayed, tab_waiting, tab_ended = st.tabs(
-    ["Global", "En progreso", "Detenidos", "Esperando confirmación", "Retrasados", "En proceso", "Finalizados"]
+    ["Global", "En progreso", "Detenidos", "Esperando confirmación", "Retrasados", "Siguientes", "Finalizados"]
 )
 
 # Aplicar el filtro dependiendo de la pestaña
