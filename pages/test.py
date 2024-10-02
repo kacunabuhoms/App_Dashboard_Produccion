@@ -558,7 +558,7 @@ st.logo(image)
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
 board_ids = ["2354185091"]  # Ejemplo de lista de IDs de tableros
-group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: "new_group11120"
+group_ids = ["new_group11120"]  # Ejemplo de lista de IDs de grupos: "new_group11120" = Cerrados, "topics" = "En progreso"
 api_key = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQwNTEwNjk2OCwiYWFpIjoxMSwidWlkIjo2Mzg5NDk0MCwiaWFkIjoiMjAyNC0wOS0wMlQxODoyNjo0OS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTk3MDA2NSwicmduIjoidXNlMSJ9.XSia7vseMdnGXBQ2PiCjYNUtch-bOxeXQZeXv_8q1iI'  # Reemplaza esto con tu token de API real
 column_ids = [
     "text8", "date5", "date20", "fecha", "dropdown6", "label", "dup__of_status_17", "status_1",
@@ -570,7 +570,7 @@ json_data = []
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
 
-# Carga de dataframes
+# Session_States para DataFrames
 if "df_cerrados" not in st.session_state:
     st.session_state.df_cerrados = None
 
@@ -579,16 +579,6 @@ if "df_activos" not in st.session_state:
 
 if "df" not in st.session_state:
     st.session_state.df_activos = None
-
-# if st.sidebar.button("Cargar proyectos cerrados"):
-#     st.session_state.df_cerrados = load_dataframe_ended() 
-
-# if st.sidebar.button("Cargar proyectos activos"):
-#     st.session_state.df_activos = load_dataframe_on_progress()
-
-# if (st.session_state.df_cerrados is not None and not st.session_state.df_cerrados.empty 
-#     and st.session_state.df_activos is not None and not st.session_state.df_activos.empty):
-#     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 
 # Botón para cargar y combinar DataFrames
@@ -600,21 +590,15 @@ if st.sidebar.button("Cargar información"):
     st.session_state.endDate = datetime.today().date()
     st.session_state.clientes = st.session_state.df['Cliente'].unique() 
 
-# if st.sidebar.button("Juntar dataframes"):
-#     df = pd.concat([df_cerrados, df_activos], ignore_index=True)
-
-# # Verificar que los DataFrames existan y tengan datos antes de concatenar
-# if (st.session_state.get('df_cerrados') is not None and not st.session_state.df_cerrados.empty and
-#     st.session_state.get('df_activos') is not None and not st.session_state.df_activos.empty):
-#     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
 # Si no se selecciona ningún cliente, asumimos que se desean todos
 if 'df' in st.session_state and not st.session_state.df.empty:
+    st.sidebar.title("Fechas")
     date1 = st.sidebar.date_input("Inicio", st.session_state.startDate)
     date2 = st.sidebar.date_input("Fin", st.session_state.endDate)
     
-    # Agregar 'Todos los Clientes' a la lista de opciones
-    st.session_state.clientes = ['Todos los Clientes'] + list(st.session_state.df['Cliente'].unique())
+    # Filtrar opciones de clientes
+    st.session_state.clientes = ['TODOS LOS CLIENTES'] + list(st.session_state.df['Cliente'].unique())
     
     clientes_selected = st.sidebar.multiselect(
         "Seleccionar Clientes", 
@@ -622,7 +606,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
         default='Todos los Clientes'
     )
 
-    # Aplicar filtro de fecha y cliente
+    # Filtro de fecha y cliente
     if 'Todos los Clientes' in clientes_selected or not clientes_selected:
         filtered_df = st.session_state.df[
             (st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) &
@@ -635,7 +619,6 @@ if 'df' in st.session_state and not st.session_state.df.empty:
             (st.session_state.df["Cliente"].isin(clientes_selected))
         ]
     
-    # Mostrar el DataFrame filtrado
     st.write("DataFrame Filtrado:", filtered_df)
 
 
