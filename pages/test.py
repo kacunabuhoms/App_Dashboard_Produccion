@@ -12,7 +12,9 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 
+
 st.set_page_config(layout="wide")
+tz = pytz.timezone('America/Monterrey')
 
 
 def fetch_monday_initial_data(board_ids, group_ids, api_key):
@@ -576,15 +578,18 @@ def load_dataframe_on_progress():
 
 
 # Definir función para calcular 'Retraso'
-def calculate_retraso(row):
+def calculate_retraso(row, rounding_hours=12):
     if row['Estado'] == 'Cerrado':
         # Verificar si 'Fecha final ODT Completo' no es NaT
         if pd.isnull(row['Fecha final ODT Completo']):
             return None
+        # Calcular el delta entre 'Fecha fin ODC' y 'Fecha final ODT Completo'
         delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
     else:
-        # Usar la fecha actual
-        delta = row['Fecha fin ODC'] - pd.to_datetime(datetime.today().date())
+        # Usar la fecha actual con zona horaria de Monterrey
+        fecha_actual = pd.to_datetime(datetime.now(tz).date())
+        # Calcular el delta entre 'Fecha fin ODC' y la fecha actual
+        delta = row['Fecha fin ODC'] - fecha_actual
 
     if pd.isnull(delta):
         return None
@@ -604,7 +609,6 @@ def calculate_retraso(row):
 #------------------------------------------------------------------------------------------------
 
 # Personalización de la página
-tz = pytz.timezone('America/Monterrey')
 
 # Configuración de gspread para conectar con Google Sheets
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
