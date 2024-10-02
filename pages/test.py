@@ -6,7 +6,7 @@ import requests
 import json
 import io
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, timezone, date
 from PIL import Image
 from google.oauth2 import service_account
