@@ -608,13 +608,13 @@ if st.sidebar.button("Cargar información"):
 #     st.session_state.get('df_activos') is not None and not st.session_state.df_activos.empty):
 #     df = pd.concat([st.session_state.df_cerrados, st.session_state.df_activos], ignore_index=True)
 
-# Mostrar filtros y DataFrame si está cargado y no vacío
+# Si no se selecciona ningún cliente, asumimos que se desean todos
 if 'df' in st.session_state and not st.session_state.df.empty:
     date1 = st.sidebar.date_input("Inicio", st.session_state.startDate)
     date2 = st.sidebar.date_input("Fin", st.session_state.endDate)
     
     # Agregar 'Todos los Clientes' a la lista de opciones
-    clientes_selected = st.sidebar.multiselect("Seleccionar Clientes", st.session_state.clientes, default=st.session_state.clientes)
+    st.session_state.clientes = ['Todos los Clientes'] + list(st.session_state.df['Cliente'].unique())
     
     clientes_selected = st.sidebar.multiselect(
         "Seleccionar Clientes", 
@@ -623,8 +623,7 @@ if 'df' in st.session_state and not st.session_state.df.empty:
     )
 
     # Aplicar filtro de fecha y cliente
-    # Si no se selecciona ningún cliente, asumimos que se desean todos
-    if not clientes_selected:
+    if 'Todos los Clientes' in clientes_selected or not clientes_selected:
         filtered_df = st.session_state.df[
             (st.session_state.df["Fecha Inicio ODT"] >= pd.to_datetime(date1)) &
             (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2))
@@ -635,10 +634,10 @@ if 'df' in st.session_state and not st.session_state.df.empty:
             (st.session_state.df["Fecha final ODT Completo"] <= pd.to_datetime(date2)) &
             (st.session_state.df["Cliente"].isin(clientes_selected))
         ]
-
     
     # Mostrar el DataFrame filtrado
     st.write("DataFrame Filtrado:", filtered_df)
+
 
 else:
     st.sidebar.write("Por favor, carga la información usando el botón 'Cargar información'.")
