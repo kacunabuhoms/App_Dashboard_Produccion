@@ -541,21 +541,55 @@ def load_dataframe_on_progress():
     return df_activos
 
 
+# def load_dataframe_on_progress():
+#     df_produccion = fetch_full_data_on_progress()
+
+#     board_id = 2354185091
+#     from_date = (datetime.strptime(df_produccion['Fecha Inicio ODT'].min(), '%Y-%m-%d') - timedelta(days=2)).strftime('%Y-%m-%d')
+#     to_date = datetime.now(timezone.utc)  # Use the current date as the end date, ensuring it's timezone-aware
+#     df_activity_logs = fetch_activity_logs(api_key, board_id, from_date, to_date)
+#     df_activity_logs.rename(columns={'pulse_id': 'Item ID'}, inplace=True)
+#     st.text(" Dataframe de JSON Queries creado ")
+
+#     df_final = dataframes_cross_full(df_produccion, df_activity_logs)
+#     st.text(" Cruce de dataframes realizado con éxito ")
+
+#     df_activos = task_time(df_final)
+#     st.text(" Cálculo de duración de actividades completado ")
+
+#     # Initialize 'Estado' as 'En progreso' for all rows
+#     df_activos['Estado'] = 'En progreso'
+
+#     # Assign 'Retrasado' where 'Retraso' > 0
+#     df_activos.loc[df_activos['Retraso'] > 0, 'Estado'] = 'Retrasados'
+
+#     # Assign 'En preproyecto' where 'Preproyecto' or 'ODC' is 'None', unless already 'Retrasados'
+#     en_preproyecto_mask = ((df_activos['Preproyecto'] == 'None') | (df_activos['ODC'] == 'None')) & (df_activos['Estado'] != 'Retrasados')
+#     df_activos.loc[en_preproyecto_mask, 'Estado'] = 'En preproyecto'
+
+#     # Assign 'Detenido' where 'Preprensa', 'Impresión', 'Acabados' are all 'Done' or 'None', and 'Estado' is still 'En progreso'
+#     detenido_columns = ['Preprensa', 'Impresión', 'Acabados']
+#     detenido_mask = df_activos[detenido_columns].apply(lambda x: all(item in ['Done', 'None'] for item in x), axis=1) & (df_activos['Estado'] == 'En progreso')
+#     df_activos.loc[detenido_mask, 'Estado'] = 'Detenido'
+
+#     return df_activos
+
+
 def calcular_retraso(row):
-    if row['Estado'] == 'Cerrado':
-        # Verificar si 'Fecha final ODT Completo' no es nula
-        if pd.isnull(row['Fecha final ODT Completo']):
+        if row['Estado'] == 'Cerrado':
+            # Verificar si 'Fecha final ODT Completo' no es nula
+            if pd.isnull(row['Fecha final ODT Completo']):
+                return None
+            delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
+        else:
+            # Usar la fecha actual
+            delta = row['Fecha fin ODC'] - datetime.today().date()
+
+        if pd.isnull(delta):
             return None
-        delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
-    else:
-        # Usar la fecha actual
-        delta = row['Fecha fin ODC'] - datetime.today().date()
 
-    if pd.isnull(delta):
-        return None
-
-    days = delta.days
-    return days
+        days = delta.days
+        return days
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -623,7 +657,6 @@ if "df" not in st.session_state:
     st.session_state.df_activos = None
 
 
-# Botón para cargar y combinar DataFrames
 if st.sidebar.button("Cargar información"): 
     st.session_state.df_cerrados = load_dataframe_ended() 
     st.session_state.df_activos = load_dataframe_on_progress()
@@ -632,18 +665,17 @@ if st.sidebar.button("Cargar información"):
     st.session_state.endDate = datetime.today().date()
     st.session_state.clientes = st.session_state.df['Cliente'].unique() 
 
-
- # Convertir columnas de fecha a datetime
+    # Convertir columnas de fecha a datetime y extraer solo la fecha (sin hora)
     st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC']).dt.date
     st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce').dt.date
 
-    # Establecer el número de horas para redondear directamente en el código
-    rounding_hours = 12  # Puedes cambiar este valor según tus necesidades
-
- # Aplicar la función al DataFrame
+    # Aplicar la función al DataFrame
     st.session_state.df['Retraso'] = st.session_state.df.apply(
         calcular_retraso, axis=1
     )
+
+    # Mostrar el DataFrame actualizado
+    st.write(st.session_state.df)
 
 # Si no se selecciona ningún cliente, asumimos que se desean todos
 if 'df' in st.session_state and not st.session_state.df.empty:
