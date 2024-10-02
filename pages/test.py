@@ -543,23 +543,18 @@ def load_dataframe_on_progress():
 
 def calcular_retraso(row):
     if row['Estado'] == 'Cerrado':
-        # Verificar si 'Fecha final ODT Completo' no es NaT
+        # Verificar si 'Fecha final ODT Completo' no es nula
         if pd.isnull(row['Fecha final ODT Completo']):
             return None
         delta = row['Fecha fin ODC'] - row['Fecha final ODT Completo']
     else:
-            # Usar la fecha actual
-        delta = row['Fecha fin ODC'] - pd.to_datetime(datetime.today().date())
+        # Usar la fecha actual
+        delta = row['Fecha fin ODC'] - datetime.today().date()
 
     if pd.isnull(delta):
         return None
 
     days = delta.days
-    hours = delta.seconds / 3600
-
-    # Redondear según 'rounding_hours'
-    if hours >= rounding_hours:
-        days += 1
     return days
 
 #------------------------------------------------------------------------------------------------
@@ -639,13 +634,13 @@ if st.sidebar.button("Cargar información"):
 
 
  # Convertir columnas de fecha a datetime
-    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC'])
-    st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce')
+    st.session_state.df['Fecha fin ODC'] = pd.to_datetime(st.session_state.df['Fecha fin ODC']).dt.date
+    st.session_state.df['Fecha final ODT Completo'] = pd.to_datetime(st.session_state.df['Fecha final ODT Completo'], errors='coerce').dt.date
 
     # Establecer el número de horas para redondear directamente en el código
     rounding_hours = 12  # Puedes cambiar este valor según tus necesidades
 
-    # Aplicar la función al DataFrame
+ # Aplicar la función al DataFrame
     st.session_state.df['Retraso'] = st.session_state.df.apply(
         calcular_retraso, axis=1
     )
