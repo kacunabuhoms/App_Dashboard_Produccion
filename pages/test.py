@@ -597,8 +597,8 @@ def assign_estado(df):
 def plot_average_durations(df):
 # Seleccionar las columnas de interés
     columns_of_interest = [
-        'Duración Preprensa', 
-        'Duración Impresión', 'Duración Acabados', 'Duración Logistica', 'Duración ODT Completo'
+        'Duración Preprensa', 'Duración Impresión', 'Duración Acabados', 
+        'Duración Logistica', 'Duración ODT Completo'
     ]
     
     # Calcular el promedio de cada columna
@@ -607,7 +607,7 @@ def plot_average_durations(df):
     
     # Crear el gráfico de barras con Seaborn
     fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(x='Fase', y='Duración Promedio', data=averages, ax=ax, palette='Blues_d')
+    sns.barplot(x='Fase', y='Duración Promedio', data=averages, ax=ax, palette='coolwarm')
     ax.set_title('Promedio de Duración por Fase del Proyecto')
     ax.set_ylabel('Duración Promedio')
     ax.set_xlabel('Fase del Proyecto')
