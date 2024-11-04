@@ -561,7 +561,8 @@ with tab_activo:
 
             if st.button("Cargar", key="carga_cer"):
                 worksheet = sh.worksheet("Proyectos CERRADOS")
-                set_with_dataframe(worksheet, df_cerrados)
+                worksheet.update('A1', "PRUEBA")
+                # set_with_dataframe(worksheet, df_cerrados)
         
 
 
