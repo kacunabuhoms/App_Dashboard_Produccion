@@ -466,6 +466,23 @@ def task_time_with_hours(df_final):
     return df_final
 
 
+def clean_data(df):
+    # Lista de columnas de duración que deseas verificar
+    duration_columns = [
+        'Duración Preproyecto', 'Duración ODC', 'Duración Preprensa',
+        'Duración Impresión', 'Duración Acabados', 'Duración Logistica',
+        'Duración ODT Completo'
+    ]
+    
+    # Eliminar filas donde la columna 'Cliente' es nula
+    df = df[df['Cliente'].notnull()]
+    
+    # Filtrar el DataFrame para eliminar filas donde cualquier columna de duración tenga un valor menor a 0
+    for column in duration_columns:
+        df = df[df[column] >= 0]
+    
+    return df
+
 
 #------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------
@@ -539,7 +556,8 @@ with tab_activo:
             df_cerrados = task_time(df_final)
             st.text("---------- Cálculo de duración de actividades completado ----------")
 
-            st.dataframe(df_cerrados)
+            result = clean_data(df_cerrados)
+            st.dataframe(result)
         
 
 
@@ -571,5 +589,6 @@ with tab_cerrado:
             df_activos = task_time(df_final)
             st.text("---------- Cálculo de duración de actividades completado ----------")
 
-            st.dataframe(df_activos)
+            result = clean_data(df_activos)
+            st.dataframe(result)
 
