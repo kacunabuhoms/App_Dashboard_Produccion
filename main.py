@@ -556,8 +556,7 @@ with tab_activo:
             df_cerrados = task_time(df_final)
             st.text("---------- Cálculo de duración de actividades completado ----------")
 
-            result = clean_data(df_cerrados)
-            st.dataframe(result)
+            st.dataframe(df_cerrados)
         
 
 
