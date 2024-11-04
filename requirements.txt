@@ -18,6 +18,7 @@ google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
 googleapis-common-protos==1.65.0
 gspread==6.1.2
+gspread-dataframe==4.0.0
 httplib2==0.22.0
 idna==3.10
 Jinja2==3.1.4
