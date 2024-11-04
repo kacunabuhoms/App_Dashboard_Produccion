@@ -6,6 +6,7 @@ import requests
 import json
 import io
 import numpy as np
+from gspread_dataframe import set_with_dataframe
 from datetime import datetime, timedelta, timezone
 from PIL import Image
 from google.oauth2 import service_account
@@ -499,7 +500,7 @@ credentials = service_account.Credentials.from_service_account_info(
 )
 # Usar las credenciales para autenticarse con Google Sheets
 gc = gspread.authorize(credentials)
-sh = gc.open_by_key('1FdbiJU5OPT6446U2g4VAA3bnbUOm0jSPMi3KwkEtk1I')
+sh = gc.open_by_key('1pvFWzdLybMmK6RT_yPauYytbvzBhVFT2nOcbJ91XQaI')
 
 # Construye el servicio de la API de Google Drive
 service = build('drive', 'v3', credentials=credentials)
@@ -555,6 +556,9 @@ with tab_activo:
 
             df_cerrados = task_time(df_final)
             st.text("---------- Cálculo de duración de actividades completado ----------")
+            
+            worksheet = sh.worksheet("Proyectos CERRADOS")
+            set_with_dataframe(worksheet, df_cerrados)
 
             st.dataframe(df_cerrados)
         
