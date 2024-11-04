@@ -556,11 +556,12 @@ with tab_activo:
 
             df_cerrados = task_time(df_final)
             st.text("---------- Cálculo de duración de actividades completado ----------")
-            
-            worksheet = sh.worksheet("Proyectos CERRADOS")
-            set_with_dataframe(worksheet, df_cerrados)
 
             st.dataframe(df_cerrados)
+
+            if st.button("Cargar", key="carga_cer"):
+                worksheet = sh.worksheet("Proyectos CERRADOS")
+                set_with_dataframe(worksheet, df_cerrados)
         
 
 
